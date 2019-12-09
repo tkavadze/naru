@@ -1,0 +1,58 @@
+@import 'generics';
+
+.shopping-cart-container {
+	float: left;
+	z-index: 100;
+	background-color: #ffffff;
+	width: 70%;
+	height: 100%;
+	padding: 50px;
+
+	&__title {
+		border-bottom: 1px solid grey;
+	}
+}
+
+.order-summary-container {
+	float: right;
+	background-color: #f3f3f3;
+	z-index: 100;
+	height: 100%;
+	width: 30%;
+	padding: 50px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	&__title {
+		border-bottom: 1px solid grey;
+	}
+
+	&__total-items {
+		padding: 40px 0;
+		border-bottom: 1px solid grey;
+
+	}
+
+	&__discounts {
+		border-bottom: 1px solid grey;
+		margin: 20px auto;
+
+		&__item {
+			padding: 10px 0;
+		}
+	}
+}
+
+.total-summary {
+	border-top: 1px solid grey;
+
+	&__button {
+		background-color: #7250ff;
+		color: white;
+		font-size: 24px;
+		height: 60px;
+		width: 100%;
+		border-radius: 6px;
+	}
+}
