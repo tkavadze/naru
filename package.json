@@ -1,0 +1,28 @@
+{
+    "name": "naru-project",
+    "description": "Checkout module in jQuery",
+    "version": "1.0.0",
+    "main": "gulpfile.js",
+    "keywords": [
+        "gulp",
+        "html",
+        "css",
+        "javascript"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "/"
+    },
+    "license": "ISC",
+    "devDependencies": {
+        "autoprefixer": "^9.7.0",
+        "cssnano": "^4.1.10",
+        "gulp": "^4.0.2",
+        "gulp-concat": "^2.6.1",
+        "gulp-postcss": "^8.0.0",
+        "gulp-replace": "^1.0.0",
+        "gulp-sass": "^4.0.2",
+        "gulp-sourcemaps": "^2.6.5",
+        "gulp-uglify": "^3.0.2"
+    }
+}
