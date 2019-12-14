@@ -1,77 +1,63 @@
-// Initialize modules
-// Importing specific gulp API functions lets us write them below as series() instead of gulp.series()
-const { src, dest, watch, series, parallel } = require('gulp');
-// Importing all the Gulp-related packages we want to use
-const sourcemaps = require('gulp-sourcemaps');
-const sass = require('gulp-sass');
-const concat = require('gulp-concat');
-const uglify = require('gulp-uglify');
-const postcss = require('gulp-postcss');
-const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
-var replace = require('gulp-replace');
+var gulp = require('gulp'),
+	sass = require('gulp-sass'),
+	browserSync = require('browser-sync'),
+	rename = require('gulp-rename'),
+	cssnano = require('gulp-cssnano'),
+	clean = require('gulp-clean'),
+	babel = require('gulp-babel');
 
+gulp.task('css', function () {
+	return gulp
+		.src('src/scss/*.scss')
+		.pipe(sass({ errLogToConsole: true }))
+		.pipe(gulp.dest('app/assets/css'))
+		.pipe(cssnano())
+		.pipe(rename({ suffix: '.min' }))
+		.pipe(gulp.dest('app/assets/css'))
+		.pipe(browserSync.reload({ stream: true }));
+});
 
-// File paths
-const files = {
-    scssPath: 'src/styles/*.scss',
-    jsPath: 'src/js/*.js',
-    htmlPath: 'src/index.html'
-}
+gulp.task('js', function () {
+	gulp
+		.src('src/js/main.js')
+		.pipe(gulp.dest('app/assets/js'))
+		.pipe(babel())
+		.pipe(rename({ suffix: '.min' }))
+		.pipe(gulp.dest('app/assets/js'))
+		.pipe(browserSync.reload({ stream: true, once: true }));
+});
 
-// Sass task: compiles the style.scss file into style.css
-function scssTask() {
-    return src(files.scssPath)
-        .pipe(sourcemaps.init()) // initialize sourcemaps first
-        .pipe(sass()) // compile SCSS to CSS
-        .pipe(postcss([autoprefixer(), cssnano()])) // PostCSS plugins
-        .pipe(sourcemaps.write('.')) // write sourcemaps file in current directory
-        .pipe(dest('dist')); // put final CSS in dist folder
-}
+gulp.task('html', function () {
+	gulp.src('src/*.html').pipe(gulp.dest('app')).pipe(browserSync.reload({ stream: true }));
+});
 
-// JS task: concatenates and uglifies JS files to script.js
-function jsTask() {
-    return src([
-            files.jsPath
-            //,'!' + 'includes/js/jquery.min.js', // to exclude any specific files
-        ])
-        .pipe(concat('all.js'))
-        .pipe(uglify())
-        .pipe(dest('dist'));
-}
+gulp.task('other', function () {
+	gulp.src(['src/data.json', 'src/jquery-3.4.1.min.js']).pipe(gulp.dest('app'));
+});
 
-function htmlTask() {
-    return src(files.htmlPath)
-        .pipe(dest('dist'));
-}
+gulp.task('archive', function () {
+	gulp.src('app/*')
+		.pipe(gulp.dest('--archive'));
+});
 
-// Cachebust
-var cbString = new Date().getTime();
+gulp.task('clean', function () {
+	return gulp.src('--archive').pipe(clean({ force: true }));
+});
 
-function cacheBustTask() {
-    return src(['src/index.html'])
-        .pipe(replace(/cb=\d+/g, 'cb=' + cbString))
-        .pipe(dest('.'));
-}
+gulp.task('browser-sync', function () {
+	browserSync.init(null, {
+		server: {
+			baseDir: 'app',
+		},
+	});
+});
+gulp.task('bs-reload', function () {
+	browserSync.reload();
+});
 
-// Watch task: watch SCSS and JS files for changes
-// If any change, run scss and js tasks simultaneously
-function watchTask() {
-    watch([files.scssPath, files.jsPath],
-        series(
-            parallel(scssTask, jsTask),
-            htmlTask,
-            cacheBustTask
-        )
-    );
-}
-
-// Export the default Gulp task so it can be run
-// Runs the scss and js tasks simultaneously
-// then runs cacheBust, then watch task
-exports.default = series(
-    parallel(scssTask, jsTask),
-    htmlTask,
-    cacheBustTask,
-    watchTask
-);
+gulp.task('default', ['archive', 'css', 'js', 'html', 'other', 'browser-sync'], function () {
+	gulp.watch('src/scss/*.scss', ['css']);
+	gulp.watch('src/js/*.js', ['js']);
+	gulp.watch('src/*.html', ['html']);
+	gulp.watch('app/*.html', ['bs-reload']);
+});
