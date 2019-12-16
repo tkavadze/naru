@@ -33,3 +33,7 @@ node_modules
 
 # Test results
 test.xunit
+.todos
+.archive/
+.vscode/
+app/

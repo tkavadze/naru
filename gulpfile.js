@@ -37,11 +37,11 @@ gulp.task('other', function () {
 
 gulp.task('archive', function () {
 	gulp.src('app/*')
-		.pipe(gulp.dest('--archive'));
+		.pipe(gulp.dest('.archive'));
 });
 
 gulp.task('clean', function () {
-	return gulp.src('--archive').pipe(clean({ force: true }));
+	return gulp.src('.archive').pipe(clean({ force: true }));
 });
 
 gulp.task('browser-sync', function () {
